@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
-import {View,Text} from 'react-native';
+import {View,Text, StyleSheet} from 'react-native';
 
 class App extends Component {
     render() {
         return (
-            <View>
-                <Text>Target Sum...</Text>
+            <View style={styles.container}>                
             </View>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container:{
+        backgroundColor: '#ddd',
+        flex:1
+    }
+})
 
 export default App;

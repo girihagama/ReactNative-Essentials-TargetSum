@@ -17,7 +17,6 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
-    'react/prop-types': ['off'],
     'react/display-name': ['off'],
     'react/no-unescaped-entities': ['off'],
     indent: ['error', 2, {SwitchCase: 1}],

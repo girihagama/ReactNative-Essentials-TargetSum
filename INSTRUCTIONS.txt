@@ -1,0 +1,9 @@
+UPDATE : Android Studio Vesion to latest (first time only)
+INSTALL : Latest JDK (first time only)
+IMPORT : ./android directory to Andriod Studio (first time only)
+ADD : JDK/bin folder path to PATH variable (first time only)
+SET : JAVA_HOME variable to JDK folder path (first time only)
+CREATE : AVD device that runs Android 6 - Marshmello
+LAUNCH : Created AVD device
+RUN : 'npm start' at ./ using command line (starts development server)
+RUN : On the launched AVD using Android Studio (after AVD & development server properly start)

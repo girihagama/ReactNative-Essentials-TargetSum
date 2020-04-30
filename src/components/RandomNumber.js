@@ -4,14 +4,16 @@ import PropTypes from 'prop-types';
 
 class RandomNumber extends Component {
     static propTypes = {
-        id:PropTypes.number.isRequired,
+        id: PropTypes.number.isRequired,
         number: PropTypes.number.isRequired,
         isDisabled: PropTypes.bool.isRequired,
         onPress: PropTypes.func.isRequired,
     };
     handlePrass = () => {
         //console.log("Number Touched: ", this.props.number);
-        this.props.onPress(this.props.id);
+        if (!this.props.isDisabled) {
+            this.props.onPress(this.props.id);
+        }
     }
     render() {
         return (

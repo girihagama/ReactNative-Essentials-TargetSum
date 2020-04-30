@@ -46,7 +46,7 @@ class Game extends Component {
         return (
             <View style={styles.container}>
                 <Text style={styles.title}>Find The Sum:</Text>
-                <Text style={styles.target}>{this.target}</Text>
+                <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>{this.target}</Text>
                 <Text style={styles.title}>Using 4 Numbers Of Following</Text>
                 <View style={styles.randomContainer}>{
                     ((this.randomNumbers)/* .sort(function() {
@@ -57,7 +57,7 @@ class Game extends Component {
                                 key={index}
                                 id={index}
                                 number={randNumber}
-                                isDisabled={this.isNumberSelected(index)}
+                                isDisabled={this.isNumberSelected(index) || gameStatus !== 'PLAYING'}
                                 onPress={this.selectNumber}
                             />
                         );
@@ -93,6 +93,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-around',
+    },
+    STATUS_PLAYING:{
+        backgroundColor: 'black',
+    },
+    STATUS_WON:{
+        backgroundColor: 'green',
+    },
+    STATUS_LOST:{
+        backgroundColor: 'red',
     },
 });
 

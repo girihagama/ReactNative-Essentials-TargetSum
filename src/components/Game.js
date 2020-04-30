@@ -8,7 +8,7 @@ class Game extends Component {
         randomNumberCount: PropTypes.number.isRequired,
     }
     state = {
-        selectedNumbers: [0, 4],
+        selectedNumbers: [],
     }
     //generate random numbers
     randomNumbers = Array.from({ length: this.props.randomNumberCount })
@@ -20,7 +20,11 @@ class Game extends Component {
     isNumberSelected = (numberIndex) => {
         return this.state.selectedNumbers.indexOf(numberIndex) >= 0;
     }
+    selectNumber = (numberIndex) => {
+        this.setState((prevState) => ({selectedNumbers: [...prevState.selectedNumbers,numberIndex]}));
+    };
     render() {
+        console.log('Selected Number Array', this.state.selectedNumbers);
         console.log('Generated Array:', this.randomNumbers);
         return (
             <View style={styles.container}>
@@ -32,7 +36,13 @@ class Game extends Component {
                         return .5 - Math.random();
                       }) */).map((randNumber, index) => {
                         return (
-                            <RandomNumber key={index} number={randNumber} isSelected={this.isNumberSelected(index)}></RandomNumber>
+                            <RandomNumber
+                                key={index}
+                                id={index}
+                                number={randNumber}
+                                isDisabled={this.isNumberSelected(index)}
+                                onPress={this.selectNumber}
+                            />
                         );
                     })
                 }</View>

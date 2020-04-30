@@ -4,16 +4,19 @@ import PropTypes from 'prop-types';
 
 class RandomNumber extends Component {
     static propTypes = {
+        id:PropTypes.number.isRequired,
         number: PropTypes.number.isRequired,
-        isSelected: PropTypes.bool.isRequired,
+        isDisabled: PropTypes.bool.isRequired,
+        onPress: PropTypes.func.isRequired,
     };
     handlePrass = () => {
-        console.log("Number Touched: ", this.props.number);
+        //console.log("Number Touched: ", this.props.number);
+        this.props.onPress(this.props.id);
     }
     render() {
         return (
             <TouchableOpacity onPress={this.handlePrass}>
-                <Text style={[styles.random,this.props.isSelected && styles.selected]}>
+                <Text style={[styles.random, this.props.isDisabled && styles.disabled]}>
                     {this.props.number}
                 </Text>
             </TouchableOpacity>
@@ -32,7 +35,7 @@ const styles = StyleSheet.create({
         padding: 5,
         width: 100,
     },
-    selected: {
+    disabled: {
         opacity: 0.3,
     }
 });

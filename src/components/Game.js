@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
+import RandomNumber from './RandomNumber';
 
 class Game extends Component {
     static propTypes = {
@@ -15,16 +16,18 @@ class Game extends Component {
         .reduce((acc, curr) => acc + curr, 0);
 
     render() {
-        console.log('Generated Array:',this.randomNumbers);
+        console.log('Generated Array:', this.randomNumbers);
         return (
             <View style={styles.container}>
+                <Text style={styles.title}>Find The Sum:</Text>
                 <Text style={styles.target}>{this.target}</Text>
+                <Text style={styles.title}>Using 4 Numbers Of Following</Text>
                 <View style={styles.randomContainer}>{
                     ((this.randomNumbers)/* .sort(function() {
                         return .5 - Math.random();
                       }) */).map((randNumber, index) => {
-                        return(
-                        <Text style={styles.random} key={index}>{randNumber}</Text>
+                        return (
+                            <RandomNumber key={index} number={randNumber}></RandomNumber>
                         );
                     })
                 }</View>
@@ -39,30 +42,25 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 30,
     },
+    title: {
+        fontSize: 20,
+        color: 'black',
+        textAlign: 'center',
+    },
     target: {
         fontSize: 40,
         backgroundColor: 'black',
-        color:'white',
+        color: 'white',
         margin: 50,
         textAlign: 'center',
         borderRadius: 5,
     },
-    randomContainer:{
-        flex:1,
+    randomContainer: {
+        flex: 1,
         flexDirection: 'row',
-        flexWrap:'wrap',
+        flexWrap: 'wrap',
         justifyContent: 'space-around',
     },
-    random:{
-        backgroundColor:'#aaa',
-        textAlign: 'center',
-        borderRadius: 50,
-        marginHorizontal: 50,
-        marginVertical:25,
-        fontSize:35,
-        padding:5,
-        width:100,
-    }
 });
 
 export default Game;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
+import shuffle from 'lodash/shuffle';
 import RandomNumber from './RandomNumber';
 
 class Game extends Component {
@@ -12,6 +13,7 @@ class Game extends Component {
         selectedIds: [],
         remainingSeconds: this.props.initialSeconds,
     }
+    gameStatus = 'PLAYING';
     
     //generate random numbers
     randomNumbers = Array.from({ length: this.props.randomNumberCount })
@@ -20,6 +22,7 @@ class Game extends Component {
     target = this.randomNumbers
         .slice(0, this.props.randomNumberCount - 2)
         .reduce((acc, curr) => acc + curr, 0);
+    shuffledRandomNumbers = shuffle(this.randomNumbers);
     
     componentDidMount(){
         this.intervalId = setInterval(()=>{
@@ -45,12 +48,22 @@ class Game extends Component {
         this.setState((prevState) => ({ selectedIds: [...prevState.selectedIds, numberIndex] }));
     };
 
+    componentWillUpdate(nextProps, nextState){
+        if(nextState.selectedIds !== this.state.selectedIds || nextState.remainingSeconds === 0){
+            this.gameStatus = this.calcGameStatus(nextState);
+            if(this.gameStatus!=='PLAYING'){
+                clearInterval(this.intervalId);
+            }
+        }
+    }
+
     //gameStatus : PLAYING, WON, LOST
-    gameStatus = () => {
-        const sumSelected = this.state.selectedIds.reduce((acc, curr) => {
-            return acc + this.randomNumbers[curr];
+    calcGameStatus = (nextState) => {
+        console.log('Calculating Game Status...')
+        const sumSelected = nextState.selectedIds.reduce((acc, curr) => {
+            return acc + this.shuffledRandomNumbers[curr];
         }, 0);
-        if(this.state.remainingSeconds === 0){
+        if(nextState.remainingSeconds === 0){
             return 'LOST';
         }
         if(sumSelected < this.target){
@@ -63,10 +76,10 @@ class Game extends Component {
             return 'LOST';
         }
         console.log('Game Status: ',sumSelected);
-    };
+    };    
 
     render() {        
-        const gameStatus = this.gameStatus();       
+        const gameStatus = this.gameStatus;       
         console.log('Selected Number Array: ', this.state.selectedIds);
         console.log('Generated Array:', this.randomNumbers);
         return (
@@ -75,7 +88,7 @@ class Game extends Component {
                 <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>{this.target}</Text>
                 <Text style={styles.title}>Using 4 Numbers Of Following</Text>
                 <View style={styles.randomContainer}>{
-                    (this.randomNumbers).map((randNumber, index) => {
+                    (this.shuffledRandomNumbers).map((randNumber, index) => {
                         return (
                             <RandomNumber
                                 key={index}
@@ -87,7 +100,7 @@ class Game extends Component {
                         );
                     })
                 }</View>
-                <Text>{this.state.remainingSeconds}</Text>
+                {/* <Text>{this.state.remainingSeconds}</Text> */}
             </View>
         );
     }

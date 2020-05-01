@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button } from 'react-native';
 import PropTypes from 'prop-types';
 import shuffle from 'lodash/shuffle';
 import RandomNumber from './RandomNumber';
@@ -8,13 +8,14 @@ class Game extends Component {
     static propTypes = {
         randomNumberCount: PropTypes.number.isRequired,
         initialSeconds: PropTypes.number.isRequired,
+        onPlayAgain: PropTypes.func.isRequired,
     }
     state = {
         selectedIds: [],
         remainingSeconds: this.props.initialSeconds,
     }
     gameStatus = 'PLAYING';
-    
+
     //generate random numbers
     randomNumbers = Array.from({ length: this.props.randomNumberCount })
         .map(() => 1 + Math.floor(10 * Math.random()));
@@ -23,20 +24,20 @@ class Game extends Component {
         .slice(0, this.props.randomNumberCount - 2)
         .reduce((acc, curr) => acc + curr, 0);
     shuffledRandomNumbers = shuffle(this.randomNumbers);
-    
-    componentDidMount(){
-        this.intervalId = setInterval(()=>{
-            this.setState((prevState)=>{
-                return {remainingSeconds: prevState.remainingSeconds - 1}
-            },()=>{
-                if(this.state.remainingSeconds === 0){
+
+    componentDidMount() {
+        this.intervalId = setInterval(() => {
+            this.setState((prevState) => {
+                return { remainingSeconds: prevState.remainingSeconds - 1 }
+            }, () => {
+                if (this.state.remainingSeconds === 0) {
                     clearInterval(this.intervalId);
                 }
             });
-        },1000);
+        }, 1000);
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         clearInterval(this.intervalId);
     }
 
@@ -48,10 +49,10 @@ class Game extends Component {
         this.setState((prevState) => ({ selectedIds: [...prevState.selectedIds, numberIndex] }));
     };
 
-    componentWillUpdate(nextProps, nextState){
-        if(nextState.selectedIds !== this.state.selectedIds || nextState.remainingSeconds === 0){
+    componentWillUpdate(nextProps, nextState) {
+        if (nextState.selectedIds !== this.state.selectedIds || nextState.remainingSeconds === 0) {
             this.gameStatus = this.calcGameStatus(nextState);
-            if(this.gameStatus!=='PLAYING'){
+            if (this.gameStatus !== 'PLAYING') {
                 clearInterval(this.intervalId);
             }
         }
@@ -63,23 +64,23 @@ class Game extends Component {
         const sumSelected = nextState.selectedIds.reduce((acc, curr) => {
             return acc + this.shuffledRandomNumbers[curr];
         }, 0);
-        if(nextState.remainingSeconds === 0){
+        if (nextState.remainingSeconds === 0) {
             return 'LOST';
         }
-        if(sumSelected < this.target){
+        if (sumSelected < this.target) {
             return 'PLAYING';
         }
-        if(sumSelected === this.target){
+        if (sumSelected === this.target) {
             return 'WON';
         }
-        if(sumSelected > this.target){
+        if (sumSelected > this.target) {
             return 'LOST';
         }
-        console.log('Game Status: ',sumSelected);
-    };    
+        console.log('Game Status: ', sumSelected);
+    };
 
-    render() {        
-        const gameStatus = this.gameStatus;       
+    render() {
+        const gameStatus = this.gameStatus;
         console.log('Selected Number Array: ', this.state.selectedIds);
         console.log('Generated Array:', this.randomNumbers);
         return (
@@ -100,7 +101,9 @@ class Game extends Component {
                         );
                     })
                 }</View>
-                {/* <Text>{this.state.remainingSeconds}</Text> */}
+                {
+                    (this.gameStatus !== 'PLAYING') ? <Button title="Play Again" onPress={this.props.onPlayAgain} /> : <Text style={styles.remainingTime}>Time Remaining ({this.state.remainingSeconds})</Text>
+                }
             </View>
         );
     }
@@ -131,15 +134,21 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'space-around',
     },
-    STATUS_PLAYING:{
+    STATUS_PLAYING: {
         backgroundColor: 'black',
     },
-    STATUS_WON:{
+    STATUS_WON: {
         backgroundColor: 'green',
     },
-    STATUS_LOST:{
+    STATUS_LOST: {
         backgroundColor: 'red',
     },
+    remainingTime:{
+        textAlign:'center',
+        justifyContent:'flex-end',
+        color:'gray',
+        padding: 10,
+    }
 });
 
 export default Game;

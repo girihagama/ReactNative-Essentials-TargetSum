@@ -6,10 +6,13 @@ import RandomNumber from './RandomNumber';
 class Game extends Component {
     static propTypes = {
         randomNumberCount: PropTypes.number.isRequired,
+        initialSeconds: PropTypes.number.isRequired,
     }
     state = {
         selectedIds: [],
+        remainingSeconds: this.props.initialSeconds,
     }
+    
     //generate random numbers
     randomNumbers = Array.from({ length: this.props.randomNumberCount })
         .map(() => 1 + Math.floor(10 * Math.random()));
@@ -17,17 +20,39 @@ class Game extends Component {
     target = this.randomNumbers
         .slice(0, this.props.randomNumberCount - 2)
         .reduce((acc, curr) => acc + curr, 0);
+    
+    componentDidMount(){
+        this.intervalId = setInterval(()=>{
+            this.setState((prevState)=>{
+                return {remainingSeconds: prevState.remainingSeconds - 1}
+            },()=>{
+                if(this.state.remainingSeconds === 0){
+                    clearInterval(this.intervalId);
+                }
+            });
+        },1000);
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.intervalId);
+    }
+
     isNumberSelected = (numberIndex) => {
         return this.state.selectedIds.indexOf(numberIndex) >= 0;
-    }
+    };
+
     selectNumber = (numberIndex) => {
         this.setState((prevState) => ({ selectedIds: [...prevState.selectedIds, numberIndex] }));
     };
+
     //gameStatus : PLAYING, WON, LOST
     gameStatus = () => {
         const sumSelected = this.state.selectedIds.reduce((acc, curr) => {
             return acc + this.randomNumbers[curr];
         }, 0);
+        if(this.state.remainingSeconds === 0){
+            return 'LOST';
+        }
         if(sumSelected < this.target){
             return 'PLAYING';
         }
@@ -38,9 +63,10 @@ class Game extends Component {
             return 'LOST';
         }
         console.log('Game Status: ',sumSelected);
-    }
-    render() {
-        const gameStatus = this.gameStatus();
+    };
+
+    render() {        
+        const gameStatus = this.gameStatus();       
         console.log('Selected Number Array: ', this.state.selectedIds);
         console.log('Generated Array:', this.randomNumbers);
         return (
@@ -49,9 +75,7 @@ class Game extends Component {
                 <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>{this.target}</Text>
                 <Text style={styles.title}>Using 4 Numbers Of Following</Text>
                 <View style={styles.randomContainer}>{
-                    ((this.randomNumbers)/* .sort(function() {
-                        return .5 - Math.random();
-                      }) */).map((randNumber, index) => {
+                    (this.randomNumbers).map((randNumber, index) => {
                         return (
                             <RandomNumber
                                 key={index}
@@ -63,7 +87,7 @@ class Game extends Component {
                         );
                     })
                 }</View>
-                <Text>{gameStatus}</Text>
+                <Text>{this.state.remainingSeconds}</Text>
             </View>
         );
     }
